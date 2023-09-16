@@ -15,11 +15,11 @@ if (vid.isOpened()== False):
 
 
 index = 0
-stereo = cv2.StereoBM_create(numDisparities=64, blockSize=21)
+stereo = cv2.StereoBM_create(numDisparities=32, blockSize=15)
 stereo.setPreFilterType(1)
 stereo.setPreFilterSize(7)
 stereo.setPreFilterCap(1)
-stereo.setTextureThreshold(10)
+stereo.setTextureThreshold(5)
 stereo.setUniquenessRatio(5)
 stereo.setSpeckleRange(0)
 stereo.setSpeckleWindowSize(0)
@@ -55,4 +55,4 @@ while ret == True:
     ret, rawFrame = vid.read()
 
 vid.release
-out.release
+#out.release
