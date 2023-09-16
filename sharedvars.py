@@ -16,5 +16,6 @@ with init_lock:
     volume_slider = 0
     amplitudes = [0 for i in range(k**2)]
     amplitudes_after_volume = amplitudes
-    oscillators = []
+    oscillators_L = []
+    oscillators_R = []
     exiting = False

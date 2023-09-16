@@ -11,5 +11,7 @@ def update_amplitudes():
             global local_kbyk_depthmap
             local_kbyk_depthmap = sharedvars.kbyk_depthmap
 
-        sharedvars.amplitudes = [1 - random()/4 for i in range(sharedvars.k**2)]  # placeholder values
+        sharedvars.amplitudes_L = [0.5 - random()/8 for i in range(sharedvars.k**2)]  # placeholder values
+        sharedvars.amplitudes_R = [0.5 - random()/8 for i in range(sharedvars.k**2)]  # placeholder values
+
         time.sleep(0.1)
