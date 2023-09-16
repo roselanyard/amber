@@ -5,6 +5,8 @@ import cv2
 import numpy as np
 from matplotlib import pyplot as plt
 
+def normalize_video(x):
+    return (x + 16)/1200
 
 vid = cv2.VideoCapture('data/vr-vid.mp4')
 if (vid.isOpened()== False): 
@@ -49,7 +51,9 @@ while ret == True:
     #out.write(scaledDisparity)
     newRes = (8, 8)
     resized = cv2.resize(disparity, newRes)
+    normalized_kxk_array = normalize_video(resized)
     print(resized)
+    print(normalized_kxk_array)
     print(framesRead)
     cv2.imwrite('data/resizedFrame.png',resized)
     ret, rawFrame = vid.read()
