@@ -17,14 +17,15 @@ def update_label_and_volume(val):
 
 def update_volume(val):
     with sharedvars.volume_slider_lock:
-        for i, amp in enumerate(sharedvars.amplitudes):
-            sharedvars.amplitudes_after_volume[i] = sharedvars.amplitudes[i] * val
-
+        #for i, amp in enumerate(sharedvars.amplitudes_L):
+        #    sharedvars.amplitudes_after_volume_L[i] = sharedvars.amplitudes_L[i] * float(val)
+        #    sharedvars.amplitudes_after_volume_R[i] = sharedvars.amplitudes_R[i] * float(val)
+        sharedvars.volume = float(val)/100
 
 # Create the main window
 def run_gui():
 
-    root.title("Slider Example")
+    root.title("Amber")
 
     # Create a label to display the slider value
 
@@ -34,9 +35,14 @@ def run_gui():
     slider = tk.Scale(root, from_=0, to=100, orient="horizontal", command=update_label_and_volume)
     slider.pack()
 
+
+    slider = tk.Scale(root, from_=0, to=sharedvars.k**2, orient="horizontal")
+    slider.pack()
+
     # Create a button to open the Pyo GUI
-    # pyo_button = tk.Button(root, text="Open Pyo GUI", command=open_pyo_gui)
-    # pyo_button.pack()
+
+    pyo_button = tk.Button(root, text="Toggle Harmonic Selection Mode")
+    pyo_button.pack()
 
     # Run the Tkinter main loop
 

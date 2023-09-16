@@ -7,6 +7,7 @@ import multiprocessing
 import threading
 
 import amplitudes
+#import graph
 import gui
 import synthesizer
 import depthmap
@@ -20,10 +21,13 @@ def main():
     depthmap_thread = threading.Thread(target=depthmap.update_depth_map)
     amplitudes_thread = threading.Thread(target=amplitudes.update_amplitudes)
     synth_thread = threading.Thread(target=synthesizer.play_synth)
+    #graph_thread = threading.Thread(target=graph.animate_harmonics())
     # gui_thread = threading.Thread(target=gui.run_gui)
     depthmap_thread.start()
     amplitudes_thread.start()
     synth_thread.start()
+    #graph_thread.start()
+
     # gui_thread.start()
     gui.run_gui()
 # Press the green button in the gutter to run the script.

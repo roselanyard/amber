@@ -2,7 +2,7 @@ import time
 from random import random
 
 import pyo
-import mic
+# import mic
 import amplitudes
 import sharedvars
 import asyncio
@@ -35,13 +35,12 @@ def play_synth():
             sharedvars.oscillators_R[i] = pyo.Sine(freq=(i + 1) * base_freq, mul=0)
             sharedvars.oscillators_L[i].out()
             sharedvars.oscillators_R[i].out()
-        pyo.Sig(1).out()
         while not sharedvars.exiting:
             for i in range(sharedvars.k**2):
                 sharedvars.oscillators_L[i].stop()
                 sharedvars.oscillators_R[i].stop()
-                sharedvars.oscillators_L[i] = pyo.Sine(freq = (i+1)*base_freq, mul = sharedvars.amplitudes_L[i])
-                sharedvars.oscillators_R[i] = pyo.Sine(freq = (i+1)*base_freq, mul = sharedvars.amplitudes_R[i])
+                sharedvars.oscillators_L[i] = pyo.Sine(freq = (i+1)*base_freq, mul = sharedvars.amplitudes_L[i]*sharedvars.volume)
+                sharedvars.oscillators_R[i] = pyo.Sine(freq = (i+1)*base_freq, mul = sharedvars.amplitudes_R[i]*sharedvars.volume)
                 sharedvars.oscillators_L[i].out(chnl = 0)
                 sharedvars.oscillators_R[i].out(chnl = 1)
 
