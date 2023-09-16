@@ -3,29 +3,31 @@ import tkinter as tk
 from pyo import *
 
 import sharedvars
-
+root = tk.Tk()
+label = tk.Label(root, text="Volume: 0")
 
 # Function to update the label text with the slider value
 def update_label_and_volume(val):
+    global label
     label.config(text=f"Volume: {val}")
     # Update the amplitudes based on the slider value
     slider_value = float(val) / 100.0
-    asyncio.run(update_volume(val))
+    update_volume(val)
 
 
-async def update_volume(val):
-    async with sharedvars.volume_slider_lock:
+def update_volume(val):
+    with sharedvars.volume_slider_lock:
         for i, amp in enumerate(sharedvars.amplitudes):
-            sharedvars.oscillators[i].mul = amp * val
+            sharedvars.amplitudes_after_volume[i] = sharedvars.amplitudes[i] * val
 
 
 # Create the main window
 def run_gui():
-    root = tk.Tk()
+
     root.title("Slider Example")
 
     # Create a label to display the slider value
-    label = tk.Label(root, text="Volume: 0")
+
     label.pack()
 
     # Create a slider

@@ -7,15 +7,6 @@ import amplitudes
 import sharedvars
 import asyncio
 
-local_amplitudes = []
-
-
-async def update_local_amplitudes():
-    async with sharedvars.amplitudes_lock:
-        global local_amplitudes
-        local_amplitudes = await amplitudes.getAmplitudes()
-
-
 def play_synth():
     s = pyo.Server().boot()
 
@@ -34,12 +25,12 @@ def play_synth():
 
     # Start the audio server
     s.start()
-
-    # Initialize the mixer to dummy value
-    mixer = pyo.Mix(sharedvars.oscillators)
-
-    while True:
-        asyncio.run(update_local_amplitudes())
-        mixer = pyo.Mix(sharedvars.oscillators)
-        mixer.out()
-        time.sleep(.05)
+    sharedvars.amplitudes = [0 for i in range(sharedvars.k**2)]
+    for i in range(sharedvars.k**2):
+        sharedvars.oscillators[i] = pyo.Osc(table=Sine, freq = (i+1)*base_freq, mul = 0)
+        sharedvars.oscillators[i].out()
+    while not sharedvars.exiting:
+        for i in range(sharedvars.k**2):
+            sharedvars.oscillators[i] = pyo.Osc(freq = (i+1)*base_freq, mul = sharedvars.amplitudes[i])
+            sharedvars.oscillators[i].out()
+    sharedvars.exiting = True
