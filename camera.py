@@ -3,7 +3,6 @@
 # This module should contain a function which gets camera input using OpenCV
 import cv2
 import numpy as np
-from matplotlib import pyplot as plt
 
 
 vid = cv2.VideoCapture('data/vr-vid.mp4')
@@ -15,16 +14,20 @@ if (vid.isOpened()== False):
 
 
 index = 0
-stereo = cv2.StereoBM_create(numDisparities=32, blockSize=15)
-stereo.setPreFilterType(1)
+stereo = cv2.StereoBM_create(numDisparities=80, blockSize=15)
+stereo.setPreFilterType(0)
 stereo.setPreFilterSize(7)
-stereo.setPreFilterCap(1)
-stereo.setTextureThreshold(5)
-stereo.setUniquenessRatio(5)
-stereo.setSpeckleRange(0)
-stereo.setSpeckleWindowSize(0)
+stereo.setPreFilterCap(11)
+stereo.setTextureThreshold(10)
+stereo.setUniquenessRatio(1)
+stereo.setSpeckleRange(15)
+stereo.setSpeckleWindowSize(30)
 stereo.setDisp12MaxDiff(0)
 stereo.setMinDisparity(0)
+
+gaussian_kernel_size = (5, 5)
+gaussian_std_dev = 4
+
 
 ret, rawFrame = vid.read()
 
@@ -44,14 +47,20 @@ while ret == True:
 
 
     disparity = stereo.compute(stereoL, stereoR)
+    disparity_smoothed = cv2.GaussianBlur(disparity, gaussian_kernel_size, gaussian_std_dev)
+
     cv2.imwrite('data/frame.png', disparity)
+    cv2.imwrite('data/frameblurred.png', disparity_smoothed)
     #scaledDisparity = cv2.resize(disparity, (960, 1080))
     #out.write(scaledDisparity)
     newRes = (8, 8)
     resized = cv2.resize(disparity, newRes)
+    resizedBlur = cv2.resize(disparity_smoothed, newRes)
     print(resized)
     print(framesRead)
     cv2.imwrite('data/resizedFrame.png',resized)
+    cv2.imwrite('data/resizedBlurredFrame.png',resizedBlur)
+
     ret, rawFrame = vid.read()
 
 vid.release
