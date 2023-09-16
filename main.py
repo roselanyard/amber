@@ -3,15 +3,19 @@
 # Press Shift+F10 to execute it or replace it with your code.
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 
-import asyncio
+import multiprocessing
+
+import amplitudes
+
+
 def print_hi(name):
     # Use a breakpoint in the code line below to debug your script.
     print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
 
 def main():
-    lock = asyncio.Lock()
-
-    async with lock:
+    depthmap_proc = multiprocessing.Process(target=depthmap.updateDepthMap())
+    amplitudes_proc = multiprocessing.Process(target=amplitudes.updateAmplitudes())
+    synth_proc = multiprocessing.Process(target=synthesizer.playSynth())
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     print_hi('PyCharm')

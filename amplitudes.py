@@ -2,9 +2,10 @@
 import sharedvars
 
 local_kbyk_depthmap = [0 for n in range(sharedvars.k**2)]
-def getAmplitudes():
+def get_amplitudes():
 
-    async with sharedvars.lock:
+    async with sharedvars.amplitudes_lock:
+        global local_kbyk_depthmap
         local_kbyk_depthmap = sharedvars.kbyk_depthmap
 
     return [1.0, 0.5 - random(), 0.3, 0.6, 1.0 - random(),

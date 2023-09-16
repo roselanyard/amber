@@ -1,29 +1,45 @@
-from pyo import *
+import time
+from random import random
 
-# Initialize the Pyo server
-s = Server().boot()
+import pyo
 
-# Set the sample rate (samples per second)
-s.setSr(44100)
+import amplitudes
+import sharedvars
+import asyncio
 
-# Define the base frequency and number of harmonics
-base_freq = 440  # Hz
-num_harmonics = 5
+local_amplitudes = []
 
-# Create amplitude values for each harmonic (change these as needed)
-amplitudes = [1.0, 0.5, 0.3, 0.2, 0.1]
 
-# Create a list of oscillators for the harmonics
-oscillators = [Sine(freq=base_freq * (i + 1), mul=amp) for i, amp in enumerate(amplitudes)]
+async def update_local_amplitudes():
+    async with sharedvars.amplitudes_lock:
+        global local_amplitudes
+        local_amplitudes = await amplitudes.getAmplitudes()
 
-# Mix the oscillators together
-mixer = Mix(oscillators)
 
-# Start the audio server
-s.start()
+def play_synth():
+    s = pyo.Server().boot()
 
-# Start the mixer
-mixer.out()
+    # Set the sample rate (samples per second)
+    # s.setSr(44100)
 
-# Run for a specified duration (in seconds)
-s.gui(locals())
+    # Define the base frequency and number of harmonics
+    base_freq = sharedvars.base_frequency  # Hz
+    num_harmonics = sharedvars.k
+
+    # Create amplitude values for each harmonic (change these as needed)
+
+    # Create a list of oscillators for the harmonics
+    oscillators = []
+
+    # Start the audio server
+    s.start()
+
+    # Initialize the mixer to dummy value
+    mixer = pyo.Mix(oscillators)
+
+    while True:
+        asyncio.run(update_local_amplitudes())
+        oscillators = [pyo.Sine(freq=base_freq * (i + 1), mul=amp) for i, amp in enumerate(local_amplitudes)]
+        mixer = pyo.Mix(oscillators)
+        mixer.out()
+        time.sleep(.05)
