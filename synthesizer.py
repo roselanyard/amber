@@ -29,17 +29,17 @@ def play_synth():
     # Create amplitude values for each harmonic (change these as needed)
 
     # Create a list of oscillators for the harmonics
-    oscillators = []
+    # sharedvars.oscillators = []
+    # (already initialized)
 
     # Start the audio server
     s.start()
 
     # Initialize the mixer to dummy value
-    mixer = pyo.Mix(oscillators)
+    mixer = pyo.Mix(sharedvars.oscillators)
 
     while True:
         asyncio.run(update_local_amplitudes())
-        oscillators = [pyo.Sine(freq=base_freq * (i + 1), mul=amp) for i, amp in enumerate(local_amplitudes)]
-        mixer = pyo.Mix(oscillators)
+        mixer = pyo.Mix(sharedvars.oscillators)
         mixer.out()
         time.sleep(.05)

@@ -6,6 +6,9 @@
 import multiprocessing
 
 import amplitudes
+import gui
+import synthesizer
+import depthmap
 
 
 def print_hi(name):
@@ -14,8 +17,9 @@ def print_hi(name):
 
 def main():
     depthmap_proc = multiprocessing.Process(target=depthmap.updateDepthMap())
-    amplitudes_proc = multiprocessing.Process(target=amplitudes.updateAmplitudes())
-    synth_proc = multiprocessing.Process(target=synthesizer.playSynth())
+    amplitudes_proc = multiprocessing.Process(target=amplitudes.get_amplitudes())
+    synth_proc = multiprocessing.Process(target=synthesizer.play_synth())
+    gui_proc = multiprocessing.Process(target=gui.run_gui())
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     print_hi('PyCharm')

@@ -1,9 +1,11 @@
 import asyncio
 
 import numpy
-
+import asyncio
 import sharedvars
+import camera
 
-local_depth_map = numpy.zeros((depthmap_m, depthmap_n))
-def updateDepthMap():
-    await with sharedvars.amplitudes_lock():
+local_image = numpy.zeros((depthmap_m, depthmap_n))
+async def updateDepthMap():
+    async with sharedvars.amplitudes_lock():
+        local_image = camera.get_greyscale_frame()
