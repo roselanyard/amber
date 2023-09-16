@@ -40,3 +40,4 @@ def run_gui():
 
     # Run the Tkinter main loop
     root.mainloop()
+    sharedvars.exiting = True

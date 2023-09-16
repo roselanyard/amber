@@ -2,8 +2,8 @@
 import sharedvars
 import asyncio
 from random import random
+import time
 local_kbyk_depthmap = [0 for n in range(sharedvars.k ** 2)]
-
 
 def update_amplitudes():
     while not (sharedvars.exiting):
@@ -11,6 +11,5 @@ def update_amplitudes():
             global local_kbyk_depthmap
             local_kbyk_depthmap = sharedvars.kbyk_depthmap
 
-        sharedvars.amplitudes = [1.0, 0.5 - random(), 0.3, 0.6, 1.0 - random(),
-                0.5, 0.2 - random(), 0.2, 0.2, 0.2 - random(), 0.2,
-                0.2, 0.2, 0.2 - random(), 0.2, 0.2 - random(), 0.2 - random()]  # placeholder values
+        sharedvars.amplitudes = [1 - random()/4 for i in range(sharedvars.k**2)]  # placeholder values
+        time.sleep(0.1)

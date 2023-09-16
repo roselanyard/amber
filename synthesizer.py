@@ -25,12 +25,15 @@ def play_synth():
 
     # Start the audio server
     s.start()
-    sharedvars.amplitudes = [0 for i in range(sharedvars.k**2)]
-    for i in range(sharedvars.k**2):
-        sharedvars.oscillators[i] = pyo.Osc(table=Sine, freq = (i+1)*base_freq, mul = 0)
-        sharedvars.oscillators[i].out()
-    while not sharedvars.exiting:
+    with sharedvars.init_lock:
+        sharedvars.amplitudes = [0 for i in range(sharedvars.k**2)]
+        sharedvars.oscillators = [pyo.Sine(freq=i + 1, mul=0) for i in range(sharedvars.k ** 2)]
         for i in range(sharedvars.k**2):
-            sharedvars.oscillators[i] = pyo.Osc(freq = (i+1)*base_freq, mul = sharedvars.amplitudes[i])
+            sharedvars.oscillators[i] = pyo.Sine(freq = (i+1)*base_freq, mul = 0)
             sharedvars.oscillators[i].out()
-    sharedvars.exiting = True
+        while not sharedvars.exiting:
+            for i in range(sharedvars.k**2):
+                sharedvars.oscillators[i].stop()
+                sharedvars.oscillators[i] = pyo.Sine(freq = (i+1)*base_freq, mul = sharedvars.amplitudes[i])
+                sharedvars.oscillators[i].out()
+            time.sleep(0.1)
