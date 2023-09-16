@@ -15,14 +15,14 @@ if (vid.isOpened()== False):
 
 
 index = 0
-stereo = cv2.StereoBM_create(numDisparities=32, blockSize=15)
-stereo.setPreFilterType(1)
+stereo = cv2.StereoBM_create(numDisparities=80, blockSize=15)
+stereo.setPreFilterType(0)
 stereo.setPreFilterSize(7)
-stereo.setPreFilterCap(1)
-stereo.setTextureThreshold(5)
-stereo.setUniquenessRatio(5)
-stereo.setSpeckleRange(0)
-stereo.setSpeckleWindowSize(0)
+stereo.setPreFilterCap(11)
+stereo.setTextureThreshold(10)
+stereo.setUniquenessRatio(1)
+stereo.setSpeckleRange(15)
+stereo.setSpeckleWindowSize(30)
 stereo.setDisp12MaxDiff(0)
 stereo.setMinDisparity(0)
 
