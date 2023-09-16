@@ -34,4 +34,4 @@ while True:
     oscillators = [pyo.Sine(freq=base_freq * (i + 1), mul=amp) for i, amp in enumerate(local_amplitudes)]
     mixer = pyo.Mix(oscillators)
     mixer.out()
-    time.sleep(.1)
+    time.sleep(.05)
