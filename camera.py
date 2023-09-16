@@ -1,3 +1,6 @@
+# This module handles camera input and outputs
+# a numpy array containing RGB values for each pixel.
+# This module should contain a function which gets camera input using OpenCV
 import cv2
 import numpy as np
 from matplotlib import pyplot as plt
