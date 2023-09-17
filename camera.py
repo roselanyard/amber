@@ -10,9 +10,9 @@ if (vid.isOpened()== False):
   print("Error opening video stream or file")
 
 
-depthOutSmooth = cv2.VideoWriter('data/depthSmooth.avi',cv2.VideoWriter_fourcc('M','J','P','G'), 30, (960,1080),False)
-depthOutPlain = cv2.VideoWriter('data/depthNormal.avi',cv2.VideoWriter_fourcc('M','J','P','G'), 30, (960,1080),False)
-scaledOut = cv2.VideoWriter('data/scaled.avi',cv2.VideoWriter_fourcc('M','J','P','G'), 30, (8,8), False)
+#depthOutSmooth = cv2.VideoWriter('data/depthSmooth.avi',cv2.VideoWriter_fourcc('M','J','P','G'), 30, (960,1080),False)
+#depthOutPlain = cv2.VideoWriter('data/depthNormal.avi',cv2.VideoWriter_fourcc('M','J','P','G'), 30, (960,1080),False)
+#scaledOut = cv2.VideoWriter('data/scaled.avi',cv2.VideoWriter_fourcc('M','J','P','G'), 30, (8,8), False)
 
 
 index = 0
@@ -49,15 +49,15 @@ while ret == True:
 
 
     disparity = stereo.compute(stereoL, stereoR)
-    depthOutPlain.write(disparity)
+    #depthOutPlain.write(disparity)
     disparity_smoothed = cv2.GaussianBlur(disparity, gaussian_kernel_size, gaussian_std_dev)
 
     cv2.imwrite('data/frame.png', disparity)
     cv2.imwrite('data/frameblurred.png', disparity_smoothed)
-    depthOutSmooth.write(disparity_smoothed)
+    #depthOutSmooth.write(disparity_smoothed)
     newRes = (8, 8)
     resized = cv2.resize(disparity, newRes)
-    scaledOut.write(resized)
+    #scaledOut.write(resized)
     resizedBlur = cv2.resize(disparity_smoothed, newRes)
     print(resized)
     print(framesRead)
@@ -67,6 +67,6 @@ while ret == True:
     ret, rawFrame = vid.read()
 
 vid.release
-depthOutSmooth.release
-depthOutPlain.release
-scaledOut.release
+#depthOutSmooth.release
+#depthOutPlain.release
+#scaledOut.release
