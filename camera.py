@@ -16,14 +16,14 @@ scaledOut = cv2.VideoWriter('data/scaled.avi',cv2.VideoWriter_fourcc('M','J','P'
 
 
 index = 0
-stereo = cv2.StereoBM_create(numDisparities=16, blockSize=15)
+stereo = cv2.StereoBM_create(numDisparities=32, blockSize=21)
 stereo.setPreFilterType(0)
 stereo.setPreFilterSize(5)
 stereo.setPreFilterCap(5)
-stereo.setTextureThreshold(25)
+stereo.setTextureThreshold(20)
 stereo.setUniquenessRatio(1)
-stereo.setSpeckleRange(0)
-stereo.setSpeckleWindowSize(0)
+stereo.setSpeckleRange(1)
+stereo.setSpeckleWindowSize(2)
 stereo.setDisp12MaxDiff(0)
 stereo.setMinDisparity(1)
 
