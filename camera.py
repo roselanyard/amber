@@ -10,20 +10,22 @@ if (vid.isOpened()== False):
   print("Error opening video stream or file")
 
 
-#out = cv2.VideoWriter('data/outpy.avi',cv2.VideoWriter_fourcc('M','J','P','G'), 30, (960,1080))
+depthOutSmooth = cv2.VideoWriter('data/depthSmooth.avi',cv2.VideoWriter_fourcc('M','J','P','G'), 30, (960,1080),False)
+depthOutPlain = cv2.VideoWriter('data/depthNormal.avi',cv2.VideoWriter_fourcc('M','J','P','G'), 30, (960,1080),False)
+scaledOut = cv2.VideoWriter('data/scaled.avi',cv2.VideoWriter_fourcc('M','J','P','G'), 30, (8,8), False)
 
 
 index = 0
-stereo = cv2.StereoBM_create(numDisparities=80, blockSize=15)
+stereo = cv2.StereoBM_create(numDisparities=16, blockSize=15)
 stereo.setPreFilterType(0)
-stereo.setPreFilterSize(7)
-stereo.setPreFilterCap(11)
-stereo.setTextureThreshold(10)
+stereo.setPreFilterSize(5)
+stereo.setPreFilterCap(5)
+stereo.setTextureThreshold(25)
 stereo.setUniquenessRatio(1)
-stereo.setSpeckleRange(15)
-stereo.setSpeckleWindowSize(30)
+stereo.setSpeckleRange(0)
+stereo.setSpeckleWindowSize(0)
 stereo.setDisp12MaxDiff(0)
-stereo.setMinDisparity(0)
+stereo.setMinDisparity(1)
 
 gaussian_kernel_size = (5, 5)
 gaussian_std_dev = 4
@@ -47,14 +49,15 @@ while ret == True:
 
 
     disparity = stereo.compute(stereoL, stereoR)
+    depthOutPlain.write(disparity)
     disparity_smoothed = cv2.GaussianBlur(disparity, gaussian_kernel_size, gaussian_std_dev)
 
     cv2.imwrite('data/frame.png', disparity)
     cv2.imwrite('data/frameblurred.png', disparity_smoothed)
-    #scaledDisparity = cv2.resize(disparity, (960, 1080))
-    #out.write(scaledDisparity)
+    depthOutSmooth.write(disparity_smoothed)
     newRes = (8, 8)
     resized = cv2.resize(disparity, newRes)
+    scaledOut.write(resized)
     resizedBlur = cv2.resize(disparity_smoothed, newRes)
     print(resized)
     print(framesRead)
@@ -64,4 +67,6 @@ while ret == True:
     ret, rawFrame = vid.read()
 
 vid.release
-#out.release
+depthOutSmooth.release
+depthOutPlain.release
+scaledOut.release
