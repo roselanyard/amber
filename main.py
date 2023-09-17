@@ -7,6 +7,7 @@ import multiprocessing
 import threading
 
 import amplitudes
+import camera
 #import graph
 import gui
 import synthesizer
@@ -18,13 +19,15 @@ def print_hi(name):
     print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
 
 def main():
-    depthmap_thread = threading.Thread(target=depthmap.update_depth_map)
-    amplitudes_thread = threading.Thread(target=amplitudes.update_amplitudes)
+    camera_thread = threading.Thread(target=camera.update_depth_map) # this should be refactored immediately
+    depthmap_thread = threading.Thread(target=depthmap.update_amplitudes)
+    #amplitudes_thread = threading.Thread(target=amplitudes.update_amplitudes)
     synth_thread = threading.Thread(target=synthesizer.play_synth)
     #graph_thread = threading.Thread(target=graph.animate_harmonics())
     # gui_thread = threading.Thread(target=gui.run_gui)
+    camera_thread.start()
     depthmap_thread.start()
-    amplitudes_thread.start()
+    #amplitudes_thread.start()
     synth_thread.start()
     #graph_thread.start()
 

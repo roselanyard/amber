@@ -15,7 +15,7 @@ def play_synth():
 
     # Define the base frequency and number of harmonics
     base_freq = sharedvars.base_frequency  # Hz
-    num_harmonics = sharedvars.k
+    num_harmonics = (sharedvars.k**2)/2
 
     # Create amplitude values for each harmonic (change these as needed)
 
@@ -26,17 +26,17 @@ def play_synth():
     # Start the audio server
     s.start()
     with sharedvars.init_lock:
-        sharedvars.amplitudes_L = [0 for i in range(sharedvars.k**2)]
-        sharedvars.amplitudes_R = [0 for i in range(sharedvars.k ** 2)]
-        sharedvars.oscillators_L = [pyo.Sine(freq=i + 1, mul=0) for i in range(sharedvars.k ** 2)]
-        sharedvars.oscillators_R = [pyo.Sine(freq=i + 1, mul=0) for i in range(sharedvars.k ** 2)]
-        for i in range(sharedvars.k**2):
+        sharedvars.amplitudes_L = [0 for i in range(int((sharedvars.k**2)/2))]
+        sharedvars.amplitudes_R = [0 for i in range(int((sharedvars.k**2)/2))]
+        sharedvars.oscillators_L = [pyo.Sine(freq=i + 1, mul=0) for i in range(32)] # hardcoding to debug
+        sharedvars.oscillators_R = [pyo.Sine(freq=i + 1, mul=0) for i in range(32)]
+        for i in range(32):
             sharedvars.oscillators_L[i] = pyo.Sine(freq = (i+1)*base_freq, mul = 0)
             sharedvars.oscillators_R[i] = pyo.Sine(freq=(i + 1) * base_freq, mul=0)
             sharedvars.oscillators_L[i].out()
             sharedvars.oscillators_R[i].out()
         while not sharedvars.exiting:
-            for i in range(sharedvars.k**2):
+            for i in range(32):
                 sharedvars.oscillators_L[i].stop()
                 sharedvars.oscillators_R[i].stop()
                 sharedvars.oscillators_L[i] = pyo.Sine(freq = (i+1)*base_freq, mul = sharedvars.amplitudes_L[i]*sharedvars.volume)

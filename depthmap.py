@@ -4,6 +4,7 @@ import numpy
 import asyncio
 import sharedvars
 import camera
+import time
 #
 # local_image = numpy.zeros((depthmap_m, depthmap_n))
 # async def updateDepthMap():
@@ -76,7 +77,7 @@ def image_to_hilbert(image):
 # print("\n1D Data:")
 # print(one_d_data)
 
-def split_and_reduce(data, target_length):
+def split_and_reduce(data):
     """
     Split the data into L and R, reverse R and then reduce both L and R to target_length.
     """
@@ -89,15 +90,16 @@ def split_and_reduce(data, target_length):
 
     # Reduce function: Here we are using simple averaging to reduce the data.
     # More advanced reduction techniques can be implemented based on the needs.
-    def reduce_data(array, target_len):
-        factor = len(array) // target_len
-        return np.array([np.mean(array[i:i+factor]) for i in range(0, len(array), factor)])
+    #def reduce_data(array, target_len):
+    #    factor = len(array) // target_len
+    #    return np.array([np.mean(array[i:i+factor]) for i in range(0, len(array), factor)])
 
     # Reduce L and R
-    L_reduced = reduce_data(L, target_length // 2)
-    R_reduced = reduce_data(R, target_length // 2)
+    #L_reduced = reduce_data(L, target_length // 2)
+   # R_reduced = reduce_data(R, target_length // 2)
 
-    return L_reduced, R_reduced
+    #return L_reduced, R_reduced
+    return L, R
 
 # Test
 # Assuming target length is k*k (e.g., 16 for k=4)
@@ -107,3 +109,12 @@ def split_and_reduce(data, target_length):
 #
 # print("L:", L)
 # print("R:", R)
+def update_amplitudes():
+    while sharedvars.exiting is not True:
+        with sharedvars.depthmap_lock:
+            hilbert_curve_mapping = image_to_hilbert(sharedvars.kbyk_depthmap)
+        path_L, path_R = split_and_reduce(hilbert_curve_mapping)
+        with sharedvars.amplitudes_lock:
+            sharedvars.amplitudes_L = path_L.tolist()
+            sharedvars.amplitudes_R = path_R.tolist()
+        time.sleep(0.1)
