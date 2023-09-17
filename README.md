@@ -1,4 +1,4 @@
-# amber
+# Amber: a software tool to provide access to a visual field via timbres
 
 A novel vision assistance technology using timbres to describe a field of vision.
 
