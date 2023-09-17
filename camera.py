@@ -14,20 +14,26 @@ if (vid.isOpened()== False):
   print("Error opening video stream or file")
 
 
-#out = cv2.VideoWriter('data/outpy.avi',cv2.VideoWriter_fourcc('M','J','P','G'), 30, (960,1080))
+#depthOutSmooth = cv2.VideoWriter('data/depthSmooth.avi',cv2.VideoWriter_fourcc('M','J','P','G'), 30, (960,1080),False)
+#depthOutPlain = cv2.VideoWriter('data/depthNormal.avi',cv2.VideoWriter_fourcc('M','J','P','G'), 30, (960,1080),False)
+#scaledOut = cv2.VideoWriter('data/scaled.avi',cv2.VideoWriter_fourcc('M','J','P','G'), 30, (8,8), False)
 
 
 index = 0
-stereo = cv2.StereoBM_create(numDisparities=80, blockSize=15)
+stereo = cv2.StereoBM_create(numDisparities=32, blockSize=21)
 stereo.setPreFilterType(0)
-stereo.setPreFilterSize(7)
-stereo.setPreFilterCap(11)
-stereo.setTextureThreshold(10)
+stereo.setPreFilterSize(5)
+stereo.setPreFilterCap(5)
+stereo.setTextureThreshold(25)
 stereo.setUniquenessRatio(1)
-stereo.setSpeckleRange(15)
-stereo.setSpeckleWindowSize(30)
-stereo.setDisp12MaxDiff(0)
-stereo.setMinDisparity(0)
+stereo.setSpeckleRange(1)
+stereo.setSpeckleWindowSize(2)
+stereo.setDisp12MaxDiff(2)
+stereo.setMinDisparity(1)
+
+gaussian_kernel_size = (5, 5)
+gaussian_std_dev = 4
+
 
 ret, rawFrame = vid.read()
 
@@ -48,8 +54,6 @@ def update_depth_map():
 
         stereoL = cv2.cvtColor(lArray, cv2.COLOR_BGR2GRAY)
         stereoR = cv2.cvtColor(rArray, cv2.COLOR_BGR2GRAY)
-
-
 
         disparity = stereo.compute(stereoL, stereoR)
         cv2.imwrite('data/frame.png', disparity)
