@@ -3,38 +3,48 @@ import tkinter as tk
 from pyo import *
 
 import sharedvars
-
+root = tk.Tk()
+label = tk.Label(root, text="Volume: 0")
 
 # Function to update the label text with the slider value
 def update_label_and_volume(val):
+    global label
     label.config(text=f"Volume: {val}")
     # Update the amplitudes based on the slider value
     slider_value = float(val) / 100.0
-    asyncio.run(update_volume(val))
+    update_volume(val)
 
 
-async def update_volume(val):
-    async with sharedvars.volume_slider_lock:
-        for i, amp in enumerate(sharedvars.amplitudes):
-            sharedvars.oscillators[i].mul = amp * val
-
+def update_volume(val):
+    with sharedvars.volume_slider_lock:
+        #for i, amp in enumerate(sharedvars.amplitudes_L):
+        #    sharedvars.amplitudes_after_volume_L[i] = sharedvars.amplitudes_L[i] * float(val)
+        #    sharedvars.amplitudes_after_volume_R[i] = sharedvars.amplitudes_R[i] * float(val)
+        sharedvars.volume = float(val)/100
 
 # Create the main window
 def run_gui():
-    root = tk.Tk()
-    root.title("Slider Example")
+
+    root.title("Amber")
 
     # Create a label to display the slider value
-    label = tk.Label(root, text="Volume: 0")
+
     label.pack()
 
     # Create a slider
     slider = tk.Scale(root, from_=0, to=100, orient="horizontal", command=update_label_and_volume)
     slider.pack()
 
+
+    slider = tk.Scale(root, from_=0, to=sharedvars.k**2, orient="horizontal")
+    slider.pack()
+
     # Create a button to open the Pyo GUI
-    # pyo_button = tk.Button(root, text="Open Pyo GUI", command=open_pyo_gui)
-    # pyo_button.pack()
+
+    pyo_button = tk.Button(root, text="Toggle Harmonic Selection Mode")
+    pyo_button.pack()
 
     # Run the Tkinter main loop
+
     root.mainloop()
+    sharedvars.exiting = True

@@ -2,19 +2,10 @@ import time
 from random import random
 
 import pyo
-
+# import mic
 import amplitudes
 import sharedvars
 import asyncio
-
-local_amplitudes = []
-
-
-async def update_local_amplitudes():
-    async with sharedvars.amplitudes_lock:
-        global local_amplitudes
-        local_amplitudes = await amplitudes.getAmplitudes()
-
 
 def play_synth():
     s = pyo.Server().boot()
@@ -24,7 +15,7 @@ def play_synth():
 
     # Define the base frequency and number of harmonics
     base_freq = sharedvars.base_frequency  # Hz
-    num_harmonics = sharedvars.k
+    num_harmonics = (sharedvars.k**2)/2
 
     # Create amplitude values for each harmonic (change these as needed)
 
@@ -34,12 +25,23 @@ def play_synth():
 
     # Start the audio server
     s.start()
+    with sharedvars.init_lock:
+        sharedvars.amplitudes_L = [0 for i in range(int((sharedvars.k**2)/2))]
+        sharedvars.amplitudes_R = [0 for i in range(int((sharedvars.k**2)/2))]
+        sharedvars.oscillators_L = [pyo.Sine(freq=i + 1, mul=0) for i in range(32)] # hardcoding to debug
+        sharedvars.oscillators_R = [pyo.Sine(freq=i + 1, mul=0) for i in range(32)]
+        for i in range(32):
+            sharedvars.oscillators_L[i] = pyo.Sine(freq = (i+1)*base_freq, mul = 0)
+            sharedvars.oscillators_R[i] = pyo.Sine(freq=(i + 1) * base_freq, mul=0)
+            sharedvars.oscillators_L[i].out()
+            sharedvars.oscillators_R[i].out()
+        while not sharedvars.exiting:
+            for i in range(32):
+                sharedvars.oscillators_L[i].stop()
+                sharedvars.oscillators_R[i].stop()
+                sharedvars.oscillators_L[i] = pyo.Sine(freq = (i+1)*base_freq, mul = sharedvars.amplitudes_L[i]*sharedvars.volume)
+                sharedvars.oscillators_R[i] = pyo.Sine(freq = (i+1)*base_freq, mul = sharedvars.amplitudes_R[i]*sharedvars.volume)
+                sharedvars.oscillators_L[i].out(chnl = 0)
+                sharedvars.oscillators_R[i].out(chnl = 1)
 
-    # Initialize the mixer to dummy value
-    mixer = pyo.Mix(sharedvars.oscillators)
-
-    while True:
-        asyncio.run(update_local_amplitudes())
-        mixer = pyo.Mix(sharedvars.oscillators)
-        mixer.out()
-        time.sleep(.05)
+            time.sleep(0.1)

@@ -3,7 +3,11 @@
 # This module should contain a function which gets camera input using OpenCV
 import cv2
 import numpy as np
+from matplotlib import pyplot as plt
+import sharedvars
 
+def normalize_video(x):
+    return (x + 16)/1200
 
 vid = cv2.VideoCapture('data/vr-vid.mp4')
 if (vid.isOpened()== False): 
@@ -37,36 +41,33 @@ ret, rawFrame = vid.read()
 
 #split_image('data/rawFrame.png', 1, 2, False, False)
 framesRead = 0
-while ret == True:
-    lArray, rArray = np.hsplit(rawFrame, 2)
-    framesRead += 1
-    # Convert frames to grayscale images
+
+def update_depth_map():
+    global ret
+    global rawFrame
+    global framesRead
+    while ret == True and sharedvars.exiting is not True:
+        lArray, rArray = np.hsplit(rawFrame, 2)
+        framesRead += 1
+        # Convert frames to grayscale images
 
 
-    stereoL = cv2.cvtColor(lArray, cv2.COLOR_BGR2GRAY) 
-    stereoR = cv2.cvtColor(rArray, cv2.COLOR_BGR2GRAY) 
+        stereoL = cv2.cvtColor(lArray, cv2.COLOR_BGR2GRAY)
+        stereoR = cv2.cvtColor(rArray, cv2.COLOR_BGR2GRAY)
 
+        disparity = stereo.compute(stereoL, stereoR)
+        cv2.imwrite('data/frame.png', disparity)
+        #scaledDisparity = cv2.resize(disparity, (960, 1080))
+        #out.write(scaledDisparity)
+        newRes = (8, 8)
+        resized = cv2.resize(disparity, newRes)
+        with sharedvars.depthmap_lock:
+            sharedvars.kbyk_depthmap = normalize_video(resized)
+        # print(resized)
+        # print(sharedvars.kbyk_depthmap)
+        # print(framesRead)
+        cv2.imwrite('data/resizedFrame.png',resized)
+        ret, rawFrame = vid.read()
 
-
-    disparity = stereo.compute(stereoL, stereoR)
-    #depthOutPlain.write(disparity)
-    disparity_smoothed = cv2.GaussianBlur(disparity, gaussian_kernel_size, gaussian_std_dev)
-
-    #cv2.imwrite('data/frame.png', disparity)
-    #cv2.imwrite('data/frameblurred.png', disparity_smoothed)
-    #depthOutSmooth.write(disparity_smoothed)
-    newRes = (8, 8)
-    resized = cv2.resize(disparity, newRes)
-    #scaledOut.write(resized)
-    resizedBlur = cv2.resize(disparity_smoothed, newRes)
-    print(resized)
-    print(framesRead)
-    #cv2.imwrite('data/resizedFrame.png',resized)
-    #cv2.imwrite('data/resizedBlurredFrame.png',resizedBlur)
-
-    ret, rawFrame = vid.read()
-
-vid.release
-#depthOutSmooth.release
-#depthOutPlain.release
-#scaledOut.release
+    vid.release()
+#out.release
