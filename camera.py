@@ -52,8 +52,8 @@ while ret == True:
     #depthOutPlain.write(disparity)
     disparity_smoothed = cv2.GaussianBlur(disparity, gaussian_kernel_size, gaussian_std_dev)
 
-    cv2.imwrite('data/frame.png', disparity)
-    cv2.imwrite('data/frameblurred.png', disparity_smoothed)
+    #cv2.imwrite('data/frame.png', disparity)
+    #cv2.imwrite('data/frameblurred.png', disparity_smoothed)
     #depthOutSmooth.write(disparity_smoothed)
     newRes = (8, 8)
     resized = cv2.resize(disparity, newRes)
@@ -61,8 +61,8 @@ while ret == True:
     resizedBlur = cv2.resize(disparity_smoothed, newRes)
     print(resized)
     print(framesRead)
-    cv2.imwrite('data/resizedFrame.png',resized)
-    cv2.imwrite('data/resizedBlurredFrame.png',resizedBlur)
+    #cv2.imwrite('data/resizedFrame.png',resized)
+    #cv2.imwrite('data/resizedBlurredFrame.png',resizedBlur)
 
     ret, rawFrame = vid.read()
 
